@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YamlConfig" default="build">
+    <property name="source.dir" location="src"/>
+    <property name="lib.dir" location="lib"/>
+    <property name="target.dir" location="target"/>
+
+    <property name="snakeyaml.version" value="1.13"/>
+
+    <target name="build" depends="jar"/>
+
+    <target name="clear">
+        <delete dir="${target.dir}"/>
+        <delete dir="${java.io.tmpdir}/YamlConfig"/>
+    </target>
+
+    <target name="init">
+        <mkdir dir="${target.dir}/classes"/>
+
+        <condition property="check-libs">
+            <and>
+                <available file="${lib.dir}/snakeyaml.jar" type="file"/>
+            </and>
+        </condition>
+    </target>
+
+    <target name="download-libs" unless="check-libs" depends="init" description="Загрузка библиотек">
+        <get dest="${lib.dir}/snakeyaml.jar" src="http://search.maven.org/remotecontent?filepath=org/yaml/snakeyaml/${snakeyaml.version}/snakeyaml-${snakeyaml.version}.jar" usetimestamp="true" />
+    </target>
+
+    <target name="compile" depends="init" description="Компиляция">
+        <path id="classpath">
+            <fileset dir="${lib.dir}">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
+
+        <javac
+            classpathref="classpath"
+            srcdir="${source.dir}"
+            destdir="${target.dir}/classes"
+            compiler="javac1.7"
+            source="1.7"
+            target="1.7"
+            debug="true"
+            debuglevel="vars,lines,source"
+            encoding="UTF-8"
+            includeantruntime="false"/>
+    </target>
+
+    <target name="jar" depends="compile" description="Сборка в java архив">
+        <tstamp>
+            <format property="BUILD_TIME" pattern="yyyy-MM-dd HH:mm:ss"/>
+        </tstamp>
+
+        <echo>Unpack libs</echo>
+        <mkdir dir="${java.io.tmpdir}/YamlConfig"/>
+        <unzip dest="${java.io.tmpdir}/YamlConfig">
+            <patternset>
+                <exclude name="**/*.java"/>
+                <exclude name="META-INF/**/*"/>
+            </patternset>
+            <fileset dir="${lib.dir}">
+                <include name="*.jar"/>
+            </fileset>
+        </unzip>
+
+        <echo>Pack jar</echo>
+        <jar destfile="${target.dir}/yamlconfig.jar">
+            <fileset dir="${target.dir}/classes"/>
+            <fileset dir="${java.io.tmpdir}/YamlConfig"/>
+
+            <manifest>
+                <attribute name="Build-By" value="DmitriyMX"/>
+                <attribute name="Build-Date" value="${BUILD_TIME}"/>
+            </manifest>
+        </jar>
+    </target>
+
+</project>
