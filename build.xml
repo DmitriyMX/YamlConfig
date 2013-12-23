@@ -24,6 +24,7 @@
     </target>
 
     <target name="download-libs" unless="check-libs" depends="init" description="Загрузка библиотек">
+        <mkdir dir="${lib.dir}"/>
         <get dest="${lib.dir}/snakeyaml.jar" src="http://search.maven.org/remotecontent?filepath=org/yaml/snakeyaml/${snakeyaml.version}/snakeyaml-${snakeyaml.version}.jar" usetimestamp="true" />
     </target>
 
