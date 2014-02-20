@@ -52,22 +52,8 @@
             <format property="BUILD_TIME" pattern="yyyy-MM-dd HH:mm:ss"/>
         </tstamp>
 
-        <echo>Unpack libs</echo>
-        <mkdir dir="${java.io.tmpdir}/YamlConfig"/>
-        <unzip dest="${java.io.tmpdir}/YamlConfig">
-            <patternset>
-                <exclude name="**/*.java"/>
-                <exclude name="META-INF/**/*"/>
-            </patternset>
-            <fileset dir="${lib.dir}">
-                <include name="*.jar"/>
-            </fileset>
-        </unzip>
-
-        <echo>Pack jar</echo>
         <jar destfile="${target.dir}/yamlconfig.jar">
             <fileset dir="${target.dir}/classes"/>
-            <fileset dir="${java.io.tmpdir}/YamlConfig"/>
 
             <manifest>
                 <attribute name="Build-By" value="DmitriyMX"/>
